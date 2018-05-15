@@ -55,9 +55,9 @@ def test_basic_repartition_dataframes(start_partitions, end_partitions):
     (2, 4),
     (4, 2)
 ])
-@pytest.mark.parametrize("dff", df_formats)
+@pytest.mark.parametrize("df_format", df_formats)
 @pytest.mark.parametrize("key", [DEFAULT_KEY, None])
-def test_repartition_directory(tmpdir, start_partitions, end_partitions, dff, key):
+def test_repartition_directory(tmpdir, start_partitions, end_partitions, df_format, key):
     df = _create_simple_df()
 
     ddf = dask.dataframe.from_pandas(df, npartitions=start_partitions)
@@ -65,13 +65,14 @@ def test_repartition_directory(tmpdir, start_partitions, end_partitions, dff, ke
     orig_path = Path(tmpdir, 'orig')
     orig_path.mkdir(exist_ok=True)
 
-    dff.write_dask_df(ddf, orig_path).compute()
+    df_format.write_dask_df(ddf, orig_path).compute()
 
     dest_path = Path(tmpdir, 'dest')
-    g = repartition_dataframes.repartition_directory(dff, orig_path, dest_path, end_partitions, key)
+    g = repartition_dataframes.repartition_directory(orig_path, dest_path,
+                                                     end_partitions, key, df_format)
     g.compute()
 
-    ddf_back = dff.read_dask_df(dest_path)
+    ddf_back = df_format.read_dask_df(dest_path)
     assert end_partitions == ddf_back.npartitions # 'nice' partitioning, so this should hold
 
     if key:

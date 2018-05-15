@@ -4,14 +4,14 @@ from pathlib import Path
 import numpy as np
 
 
-def repartition_directory(dff, dir_path, output_path, n_partitions, key):
-    ddf = dff.read_dask_df(dir_path)
+def repartition_directory(dir_path, output_path, n_partitions, key, df_format):
+    ddf = df_format.read_dask_df(dir_path)
 
     ddf_rep = repartition_dask_dataframe(ddf, n_partitions, key)
 
     dest = Path(output_path)
     dest.mkdir(exist_ok=True)
-    return dff.write_dask_df(ddf_rep, dest)
+    return df_format.write_dask_df(ddf_rep, dest)
 
 
 def repartition_dask_dataframe(ddf, n_partitions, key):
