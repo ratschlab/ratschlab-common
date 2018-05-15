@@ -73,7 +73,7 @@ class AbstractDataFrameFormat:
         return self._library_default_writing_options()
 
     @staticmethod
-    def get_effective_options(params, defaults):
+    def _get_effective_options(params, defaults):
         if not params:
             effective_params = defaults
         else:
@@ -86,26 +86,26 @@ class ParquetDataFrameFormat(AbstractDataFrameFormat):
     DEFAULT_ENGINE = 'pyarrow'
 
     def read_df(self, file_path, options=None):
-        e = ParquetDataFrameFormat.get_effective_options(options,
-                                                         self.get_default_reading_options())
+        e = ParquetDataFrameFormat._get_effective_options(options,
+                                                          self.get_default_reading_options())
         return pd.read_parquet(file_path, **e)
 
     def write_df(self, df, file_path, options=None):
-        e = self.get_effective_options(options,
-                                       self.get_default_writing_options())
+        e = self._get_effective_options(options,
+                                        self.get_default_writing_options())
         df.to_parquet(file_path, **e)
 
     def read_dask_df(self, directory, options=None):
         in_pattern = os.path.join(directory,
                                   '*.{}'.format(self.format_extension()))
-        e = ParquetDataFrameFormat.get_effective_options(options,
-                                                         self.get_default_reading_options())
+        e = ParquetDataFrameFormat._get_effective_options(options,
+                                                          self.get_default_reading_options())
         return dask.dataframe.read_parquet(str(in_pattern), **e)
 
     def write_dask_df(self, ddf, directory, options=None,
                       compute=False):
-        e = ParquetDataFrameFormat.get_effective_options(options,
-                                                         self.get_default_writing_options())
+        e = ParquetDataFrameFormat._get_effective_options(options,
+                                                          self.get_default_writing_options())
         return ddf.to_parquet(str(directory), compute=compute, **e)
 
     def format_extension(self):
@@ -123,26 +123,26 @@ class HdfDataFrameFormat(AbstractDataFrameFormat):
     DEFAULT_KEY = 'data'
 
     def read_df(self, file_path, options=None):
-        eff = HdfDataFrameFormat.get_effective_options(options,
-                                                       self.get_default_reading_options())
+        eff = HdfDataFrameFormat._get_effective_options(options,
+                                                        self.get_default_reading_options())
         return pd.read_hdf(file_path, **eff)
 
     def write_df(self, df, file_path, options=None):
-        eff = HdfDataFrameFormat.get_effective_options(options,
-                                                       self.get_default_writing_options())
+        eff = HdfDataFrameFormat._get_effective_options(options,
+                                                        self.get_default_writing_options())
         df.to_hdf(file_path, **eff)
 
     def read_dask_df(self, directory, options=None):
         in_pattern = os.path.join(directory,
                                   '*.{}'.format(self.format_extension()))
-        e = HdfDataFrameFormat.get_effective_options(options,
-                                                     self.get_default_reading_options())
+        e = HdfDataFrameFormat._get_effective_options(options,
+                                                      self.get_default_reading_options())
         return dask.dataframe.read_hdf(str(in_pattern), **e)
 
     def write_dask_df(self, ddf, directory, options=None,
                       compute=False):
-        e = HdfDataFrameFormat.get_effective_options(options,
-                                                     self.get_default_writing_options())
+        e = HdfDataFrameFormat._get_effective_options(options,
+                                                      self.get_default_writing_options())
         out_pattern = os.path.join(directory,
                                    'part-*.{}'.format(self.format_extension()))
         return ddf.to_hdf(out_pattern, compute=compute, **e)
@@ -151,7 +151,7 @@ class HdfDataFrameFormat(AbstractDataFrameFormat):
         return 'h5'
 
     def _library_default_reading_options(self):
-        return MappingProxyType({'key': self.DEFAULT_KEY})
+        return MappingProxyType({'mode' : 'r', 'key': self.DEFAULT_KEY})
 
     def _library_default_writing_options(self):
         return MappingProxyType({'key': self.DEFAULT_KEY, 'format': 'table',
