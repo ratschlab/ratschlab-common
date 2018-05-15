@@ -1,5 +1,5 @@
-Click==6.0
-dask[complete]==0.17.1
-pandas==0.22
-pyarrow==0.8.0
-tables==3.4.2
+Click>=6.0
+dask[complete]>=0.17.0
+pandas>=0.22
+pyarrow>=0.8.0
+tables>=3.4.2
