@@ -151,7 +151,7 @@ class HdfDataFrameFormat(AbstractDataFrameFormat):
         return 'h5'
 
     def _library_default_reading_options(self):
-        return MappingProxyType({'mode' : 'r', 'key': self.DEFAULT_KEY})
+        return MappingProxyType({'mode': 'r', 'key': self.DEFAULT_KEY})
 
     def _library_default_writing_options(self):
         return MappingProxyType({'key': self.DEFAULT_KEY, 'format': 'table',
