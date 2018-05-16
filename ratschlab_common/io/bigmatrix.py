@@ -14,6 +14,7 @@ the entire dataset can be handled more efficiently.
 
 import os
 from abc import ABCMeta, abstractmethod
+import collections
 from collections import namedtuple
 from enum import Enum
 
@@ -254,13 +255,37 @@ class TablesBigMatrixReader(AbstractBigMatrixReader):
             return self.data[item]
         elif len(item) == 2:
             row_dims, col_dims = item
-            if isinstance(row_dims, slice) and isinstance(col_dims, slice):
+
+            # attempt to convert to slice (e.g. 1,2,3 -> 1:3)
+            if isinstance(row_dims, collections.Iterable):
+                row_dims = self._convert_to_slice(row_dims)
+
+            if isinstance(col_dims, collections.Iterable):
+                col_dims = self._convert_to_slice(col_dims)
+
+            if isinstance(row_dims, slice) or isinstance(col_dims, slice):
                 return self.data[row_dims, col_dims]
 
+            # this can be fairly inefficient...
             # https://github.com/PyTables/PyTables/issues/401
             return self.data[row_dims, :][:, col_dims]
         else:
             raise IndexError('Invalid slices {}'.format(item))
+
+    @staticmethod
+    def _convert_to_slice(iterable):
+        start = None
+        last = None
+        for elem in iterable:
+            if not start:
+                start = elem
+            if last and elem - last != 1:
+                return iterable
+            last = elem
+
+        if start is None:
+            return iterable
+        return slice(start, last+1)
 
     def get_row_indices(self, row_query_string):
         """

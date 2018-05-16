@@ -186,6 +186,9 @@ def test_reading_bigmatrix(tmpdir, row_desc_flavor, col_desc_flavor):
         np.testing.assert_array_almost_equal(mat[(5, 7), 1:3],
                                              reader[(5, 7), 1:3])
 
+        np.testing.assert_array_almost_equal(mat[(5, 6, 7), 1:3],
+                                             reader[(5, 6, 7), 1:3])
+
         np.testing.assert_array_almost_equal(mat[5:7, (1, 3)],
                                              reader[5:7, (1, 3)])
 
@@ -204,8 +207,7 @@ def test_reading_bigmatrix(tmpdir, row_desc_flavor, col_desc_flavor):
         cols1 = reader.get_col_indices_by_name(['mycol1', 'mycol0'])
         assert (reader[row_idx, cols1][:, 1] == 4).all()
 
-        reader.col_desc()
-        reader.col_desc()
+        assert len(reader[(3,4,5), (0,2,4)]) > 0
 
 
 @pytest.mark.parametrize("filter_name,expected",
@@ -233,3 +235,14 @@ def test_create_bigmatrix_compression_filters(tmpdir, filter_name, expected):
     with tables.open_file(str(path), 'r') as hf:
         mat_pt = hf.get_node("/{}".format(bigmatrix.DATA_KEY))
         assert mat_pt.filters.complib == expected
+
+@pytest.mark.parametrize("l,expected", [
+    ([], []),
+    ([1], slice(1,2)),
+    ([1,2], slice(1,3)),
+    ([1,2,5], [1,2,5]),
+    ([1,5], [1,5]),
+    ([1,2,3,4], slice(1,5))
+])
+def test_convert_slice(l, expected):
+    assert TablesBigMatrixReader._convert_to_slice(l) == expected
