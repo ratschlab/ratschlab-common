@@ -22,6 +22,8 @@ import numpy as np
 import pandas as pd
 import tables
 
+from ratschlab_common.io.dataframe_formats import HdfDataFrameFormat
+
 DATA_KEY = 'data'
 COL_DESC_KEY = 'col_descr'
 ROW_DESC_KEY = 'row_descr'
@@ -102,6 +104,8 @@ class TablesBigMatrixWriter(AbstractBigMatrixWriter):
 
     BLOSC_FILTER = tables.Filters(complevel=5, complib='blosc:lz4',
                                   fletcher32=True)
+
+    hdf_pandas_format = HdfDataFrameFormat()
 
     def write(self, path, data_matrix, row_desc, col_desc, chunkshape=None,
               compression_filter=BLOSC_FILTER):
@@ -185,8 +189,9 @@ class TablesBigMatrixWriter(AbstractBigMatrixWriter):
 
                 elif isinstance(row_desc, pd.DataFrame):
                     hf.close()
-                    row_desc.to_hdf(path, ROW_DESC_KEY, mode='a', append=True,
-                                    format='table')
+                    self.hdf_pandas_format.write_df(row_desc, path,
+                                                    {'mode': 'a', 'append':
+                                                        True, 'key': ROW_DESC_KEY})
                 else:
                     raise ValueError("{} not supported".format(type(row_desc)))
             else:
@@ -210,7 +215,7 @@ class TablesBigMatrixWriter(AbstractBigMatrixWriter):
         tbl.append(lst)
 
     def _write_pandas_metadata(self, df, path, key):
-        df.to_hdf(path, key=key, mode='a', format='table')
+        self.hdf_pandas_format.write_df(df, path, {'key': key, 'mode': 'a'})
 
     def _get_pytable_desc(self, col_list, col_names):
         d = {}
