@@ -45,7 +45,7 @@ def main(source_file, dest_file, matrix_chunkshape, matrix_repack_options,
         if force:
             Path(dest_file).unlink()
         else:
-            raise(FileExistsError("File {} already exists!".format(dest_file)))
+            raise (FileExistsError("File {} already exists!".format(dest_file)))
 
     if matrix_repack_options:
         matrix_opts = matrix_repack_options.split(' ')
@@ -54,19 +54,22 @@ def main(source_file, dest_file, matrix_chunkshape, matrix_repack_options,
 
         if matrix_chunkshape:
             matrix_opts.extend(['--chunkshape', matrix_chunkshape])
-    _call_ptrepack(source_file, dest_file, bigmatrix.DATA_KEY,
-                         matrix_opts)
 
-    row_opts = row_meta_repack_options.split(' ') if row_meta_repack_options else \
-        DEFAULT_ROW_OPT
-    _call_ptrepack(source_file, dest_file, bigmatrix.ROW_DESC_KEY,
-                        row_opts)
+    _call_ptrepack(source_file, dest_file, bigmatrix.DATA_KEY, matrix_opts)
 
-    col_opts = col_meta_repack_options.split(' ') if col_meta_repack_options \
-        else \
-        DEFAULT_COL_OPT
-    _call_ptrepack(source_file, dest_file, bigmatrix.COL_DESC_KEY,
-                        col_opts)
+    if row_meta_repack_options:
+        row_opts = row_meta_repack_options.split(' ')
+    else:
+        row_opts = DEFAULT_ROW_OPT
+
+    _call_ptrepack(source_file, dest_file, bigmatrix.ROW_DESC_KEY, row_opts)
+
+    if col_meta_repack_options:
+        col_opts = col_meta_repack_options.split(' ')
+    else:
+        col_opts = DEFAULT_COL_OPT
+
+    _call_ptrepack(source_file, dest_file, bigmatrix.COL_DESC_KEY, col_opts)
 
     return 0
 
