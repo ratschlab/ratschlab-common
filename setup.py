@@ -27,6 +27,11 @@ setup(
         'Programming Language :: Python :: 3.6'
     ],
     description="Small library of common functionalities used in various projects in the ratschlab",
+    entry_points={
+        'console_scripts': [
+            'bigmatrix_repack=ratschlab_common.scripts.bigmatrix_repack:main',
+        ],
+    },
     install_requires=requirements,
     license="MIT license",
     long_description=readme,
