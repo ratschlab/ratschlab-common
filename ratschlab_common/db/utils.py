@@ -22,23 +22,12 @@ class PostgresDBParams(object):
         else:
             pw = self.password
 
-        use_ssl = False
-        if self.ssl_mode != 'disable':
-            use_ssl = True
-
         # see also https://jdbc.postgresql.org/documentation/head/connect.html
         return {'user': self.user,
                 'password': pw,
                 'driver': "org.postgresql.Driver",
                 'currentSchema': self.current_schema,
-<<<<<<< HEAD
-                'sslMode': self.ssl_mode
-||||||| merged common ancestors
-                'ssl': str(self.use_ssl)
-=======
-                'sslMode': self.ssl_mode,
-                'ssl': use_ssl
->>>>>>> ae05f4c3f68cee5090ef94996fe6fdda003fc278
+                'sslmode': self.ssl_mode
                 }
 
     def database_url(self):
