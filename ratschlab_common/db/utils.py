@@ -2,7 +2,7 @@ import attr
 import pgpasslib
 import records
 from records import RecordCollection
-
+import sqlalchemy
 
 @attr.s
 class PostgresDBParams(object):
@@ -12,7 +12,9 @@ class PostgresDBParams(object):
     db = attr.ib(default='postgres')
     port = attr.ib(default=5432)
     current_schema = attr.ib('public')
-    use_ssl = attr.ib(default=False)
+
+    # "disable", "require", "verify-ca" and "verify-full"
+    ssl_mode = attr.ib(default='disable')
 
     def to_jdbc_dict(self):
         if not self.password:
@@ -25,7 +27,7 @@ class PostgresDBParams(object):
                 'password': pw,
                 'driver': "org.postgresql.Driver",
                 'currentSchema': self.current_schema,
-                'ssl': str(self.use_ssl)
+                'sslMode': self.ssl_mode
                 }
 
     def database_url(self):
@@ -41,8 +43,12 @@ class PostgresDBParams(object):
         return "jdbc:postgresql://{}:{}/{}".format(self.host, self.port,
                                                    self.db)
 
+    def connection(self):
+        return sqlalchemy.create_engine(self.database_url())
+
     def _get_passwd_from_pgpass(self):
         return pgpasslib.getpass(self.host, self.port, self.db, self.user)
+
 
 # sqlalchemy.inspect(dbp._db._engine)
 

@@ -4,19 +4,20 @@ from faker import Factory
 import random
 
 # TODO refactor this out?
-@pytest.fixture()
+@pytest.fixture(scope='session')
 def a_df():
     fake = Factory.create()
     fake.seed_instance(420)
 
-    nrows = 10
+    nrows = 100
     records = []
     for _ in range(nrows):
         records.append([
             fake.name(),
             fake.email(),
             fake.date_time(),
-            random.random()
+            random.random(),
+            random.randint(1, 20)
         ])
 
     col_names = ["col{}".format(i) for i in range(len(records[0]))]
