@@ -9,7 +9,7 @@ from ratschlab_common.db.utils import PostgresDBConnectionWrapper, \
 
 class PostgresTableDumper:
     def __init__(self, params: PostgresDBParams, spark_session: SparkSession,
-                 partition_size: int = 512):
+                 partition_size: int = 300):
         """
 
         :param params:
@@ -51,10 +51,8 @@ class PostgresTableDumper:
             df = self.spark.read.jdbc(self.params.jdbc_database_url(),
                                       table_name,
                                       column=partition_column,
-                                      lowerBound=int(min_val - 1),
-                                      upperBound=int(max_val + 1),
-                                      # TODO: check
-                                      # inclusivity
+                                      lowerBound=int(min_val),
+                                      upperBound=int(max_val),
                                       numPartitions=nr_partitions,
                                       properties=self.params.to_jdbc_dict())
         else:
@@ -63,7 +61,7 @@ class PostgresTableDumper:
                                       properties=self.params.to_jdbc_dict())
 
         logging.info("Dumping to %s using %s", str(path), nr_partitions)
-        df.write.parquet(path)
+        df.write.parquet(str(path))
 
     def _compute_min_max_values(self, table_name, col_name):
         with PostgresDBConnectionWrapper(self.params) as db:
