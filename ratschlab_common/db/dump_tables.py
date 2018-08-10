@@ -48,6 +48,11 @@ class PostgresTableDumper:
             min_val, max_val = self._compute_min_max_values(table_name,
                                                             partition_column)
 
+            # handling case of empty tables
+            if not min_val or not max_val:
+                min_val = 0
+                max_val = 1
+
             df = self.spark.read.jdbc(self.params.jdbc_database_url(),
                                       table_name,
                                       column=partition_column,
@@ -72,5 +77,8 @@ class PostgresTableDumper:
         with PostgresDBConnectionWrapper(self.params) as db:
             r = db.raw_query("SELECT MIN({}) AS min, MAX({}) AS max FROM {}".
                              format(col_name, col_name, table_name)).next()
+
+            if len(r) == 0:
+                return None, None
 
             return int(r['min']), int(r['max'])
