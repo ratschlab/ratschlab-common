@@ -1,8 +1,9 @@
 import attr
 import pgpasslib
 import records
-from records import RecordCollection
 import sqlalchemy
+from records import RecordCollection
+
 
 @attr.s
 class PostgresDBParams(object):
