@@ -61,6 +61,10 @@ class PostgresTableDumper:
                                       properties=self.params.to_jdbc_dict())
 
         logging.info("Dumping to %s using %s", str(path), nr_partitions)
+
+        if partition_column:
+            df = df.sortWithinPartitions(partition_column)
+
         df.write.parquet(str(path))
 
     def _compute_min_max_values(self, table_name, col_name):
