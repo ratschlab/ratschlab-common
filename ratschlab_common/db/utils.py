@@ -3,7 +3,7 @@ import pgpasslib
 import records
 import sqlalchemy
 from records import RecordCollection
-
+from sqlalchemy.engine.reflection import Inspector
 
 @attr.s
 class PostgresDBParams(object):
@@ -80,6 +80,10 @@ class PostgresDBConnectionWrapper:
 
     def raw_query(self, q) -> RecordCollection:
         return self._db.query(q)
+
+    def list_columns(self, table_name):
+        return {d['name'] for d in Inspector(self._db._engine).get_columns(
+            table_name)}
 
     def close(self):
         self._db.close()

@@ -9,7 +9,7 @@ from ratschlab_common.db.utils import PostgresDBConnectionWrapper, \
 
 class PostgresTableDumper:
     def __init__(self, params: PostgresDBParams, spark_session: SparkSession,
-                 partition_size: int = 300):
+                 partition_size: int = 512):
         """
 
         :param params:
@@ -60,7 +60,8 @@ class PostgresTableDumper:
                                       table_name,
                                       properties=self.params.to_jdbc_dict())
 
-        logging.info("Dumping to %s using %s", str(path), nr_partitions)
+        logging.info("Dumping to %s using %s partitions", str(path),
+                     nr_partitions if nr_partitions else 1)
 
         if partition_column:
             df = df.sortWithinPartitions(partition_column)

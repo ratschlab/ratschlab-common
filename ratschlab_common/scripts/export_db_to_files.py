@@ -52,10 +52,11 @@ PostgresDBParams, spark: SparkSession):
 @click.option("--memory-per-core", type=int, default=5000)
 @click.option("--force", is_flag=True, default=False,
               help='If set, table files will be overwritten')
+@click.option('--default-partition-col', type=str, default=None)
 @click.option('--partition-col', type=(str, str), multiple=True)
 def main(dest_dir, db_host, db_port, db_name, db_username, ssl_mode, force,
          cores,
-         memory_per_core, partition_col):
+         memory_per_core, default_partition_col, partition_col):
     partition_col_dict = {k: v for k, v in partition_col}
 
     dest_dir_path = Path(dest_dir)
@@ -64,8 +65,8 @@ def main(dest_dir, db_host, db_port, db_name, db_username, ssl_mode, force,
     db_params = PostgresDBParams(user=db_username, host=db_host,
                                  port=db_port, db=db_name, ssl_mode=ssl_mode)
 
-    with PostgresDBConnectionWrapper(db_params) as db_wrapper:
-        tables = db_wrapper.list_tables()
+    db_wrapper = PostgresDBConnectionWrapper(db_params)
+    tables = db_wrapper.list_tables()
 
     with ratschlab_common.utils.create_spark_session(cores, memory_per_core) \
         as spark:
@@ -77,7 +78,15 @@ def main(dest_dir, db_host, db_port, db_name, db_username, ssl_mode, force,
             tbl_path = Path(dest_dir_path, t)
 
             if not tbl_path.exists() and not force:
-                dumper.dump_table(t, tbl_path, partition_col_dict.get(t, None))
+                default_col = None
+
+                if default_partition_col and default_partition_col in \
+                    db_wrapper.list_columns(t):
+                    default_col = default_partition_col
+
+                p_col = partition_col_dict.get(t, default_col)
+
+                dumper.dump_table(t, tbl_path, p_col)
             else:
                 logging.info('Path %s already exists, not dumping table %s',
                              tbl_path, t)
@@ -88,6 +97,8 @@ def main(dest_dir, db_host, db_port, db_name, db_username, ssl_mode, force,
                 logging.info("Counts for %s match", t)
             else:
                 logging.error("Counts for %s don't match", t)
+
+    db_wrapper.close()
 
 
 if __name__ == "__main__":
