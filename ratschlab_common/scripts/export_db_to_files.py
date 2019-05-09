@@ -54,10 +54,12 @@ PostgresDBParams, spark: SparkSession):
               help='If set, table files will be overwritten')
 @click.option('--default-partition-col', type=str, default=None)
 @click.option('--partition-col', type=(str, str), multiple=True)
+@click.option('--nr-partitions', type=(str, int), multiple=True)
 def main(dest_dir, db_host, db_port, db_name, db_username, ssl_mode, force,
          cores,
-         memory_per_core, default_partition_col, partition_col):
+         memory_per_core, default_partition_col, partition_col, nr_partitions):
     partition_col_dict = {k: v for k, v in partition_col}
+    nr_partitions_dict = {k: v for k, v in nr_partitions}
 
     dest_dir_path = Path(dest_dir)
     dest_dir_path.mkdir(exist_ok=True, parents=True)
@@ -85,8 +87,9 @@ def main(dest_dir, db_host, db_port, db_name, db_username, ssl_mode, force,
                     default_col = default_partition_col
 
                 p_col = partition_col_dict.get(t, default_col)
+                nr_part = nr_partitions_dict.get(t, None)
 
-                dumper.dump_table(t, tbl_path, p_col)
+                dumper.dump_table(t, tbl_path, p_col, nr_part)
             else:
                 logging.info('Path %s already exists, not dumping table %s',
                              tbl_path, t)

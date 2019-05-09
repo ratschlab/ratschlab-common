@@ -9,7 +9,7 @@ from ratschlab_common.db.utils import PostgresDBConnectionWrapper, \
 
 class PostgresTableDumper:
     def __init__(self, params: PostgresDBParams, spark_session: SparkSession,
-                 partition_size: int = 512):
+                 partition_size: int = 300):
         """
 
         :param params:

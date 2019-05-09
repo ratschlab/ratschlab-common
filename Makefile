@@ -59,7 +59,7 @@ prospector-all:
 	prospector --die-on-tool-error --profile minimal.yaml --test-warnings --doc-warnings
 
 test: ## run tests quickly with the default Python
-	py.test
+	pytest
 
 test-all: ## run tests on every Python version with tox
 	tox

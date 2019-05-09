@@ -12,7 +12,6 @@ class PostgresDBParams(object):
     host = attr.ib(default='localhost')
     db = attr.ib(default='postgres')
     port = attr.ib(default=5432)
-    current_schema = attr.ib('public')
 
     # "disable", "require", "verify-ca" and "verify-full"
     ssl_mode = attr.ib(default='disable')
@@ -27,7 +26,6 @@ class PostgresDBParams(object):
         return {'user': self.user,
                 'password': pw,
                 'driver': "org.postgresql.Driver",
-                'currentSchema': self.current_schema,
                 'sslmode': self.ssl_mode
                 }
 
