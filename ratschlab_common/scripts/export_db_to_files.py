@@ -44,6 +44,7 @@ PostgresDBParams, spark: SparkSession):
 @click.option("--db-port", type=int,
               help='Database port', default=5432)
 @click.option('--db-name', type=str)
+@click.option('--db-schema', type=str, default='public')
 @click.option("--db-username", type=str,
               help='Database username (password should be managed via .pgpass')
 @click.option("--ssl-mode", type=str,
@@ -55,7 +56,7 @@ PostgresDBParams, spark: SparkSession):
 @click.option('--default-partition-col', type=str, default=None)
 @click.option('--partition-col', type=(str, str), multiple=True)
 @click.option('--nr-partitions', type=(str, int), multiple=True)
-def main(dest_dir, db_host, db_port, db_name, db_username, ssl_mode, force,
+def main(dest_dir, db_host, db_port, db_name, db_schema, db_username, ssl_mode, force,
          cores,
          memory_per_core, default_partition_col, partition_col, nr_partitions):
     partition_col_dict = {k: v for k, v in partition_col}
@@ -65,11 +66,11 @@ def main(dest_dir, db_host, db_port, db_name, db_username, ssl_mode, force,
     dest_dir_path.mkdir(exist_ok=True, parents=True)
 
     db_params = PostgresDBParams(user=db_username, host=db_host,
-                                 port=db_port, db=db_name, ssl_mode=ssl_mode)
+                                 port=db_port, db=db_name, schema=db_schema, ssl_mode=ssl_mode)
 
     db_wrapper = PostgresDBConnectionWrapper(db_params)
     tables = db_wrapper.list_tables()
-
+    
     with ratschlab_common.utils.create_spark_session(cores, memory_per_core) \
         as spark:
 

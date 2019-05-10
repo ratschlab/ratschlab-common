@@ -12,6 +12,7 @@ class PostgresDBParams(object):
     host = attr.ib(default='localhost')
     db = attr.ib(default='postgres')
     port = attr.ib(default=5432)
+    schema = attr.ib(default='public')
 
     # "disable", "require", "verify-ca" and "verify-full"
     ssl_mode = attr.ib(default='disable')
@@ -26,7 +27,8 @@ class PostgresDBParams(object):
         return {'user': self.user,
                 'password': pw,
                 'driver': "org.postgresql.Driver",
-                'sslmode': self.ssl_mode
+                'sslmode': self.ssl_mode,
+                'currentSchema' : self.schema
                 }
 
     def database_url(self):
@@ -49,12 +51,14 @@ class PostgresDBParams(object):
         return pgpasslib.getpass(self.host, self.port, self.db, self.user)
 
 
-# sqlalchemy.inspect(dbp._db._engine)
-
 # TODO better name
 class PostgresDBConnectionWrapper:
     def __init__(self, params: PostgresDBParams):
         self._db = records.Database(params.database_url())
+        self.params = params
+
+        self._inspector = sqlalchemy.inspect(self._db._engine)
+
 
     def count_rows(self, table_name, approx=False):
         if not approx:
@@ -74,14 +78,14 @@ class PostgresDBConnectionWrapper:
         return int(r['size'])
 
     def list_tables(self):
-        return self._db.get_table_names()
+        return self._inspector.get_table_names(schema=self.params.schema)
 
     def raw_query(self, q) -> RecordCollection:
         return self._db.query(q)
 
     def list_columns(self, table_name):
-        return {d['name'] for d in Inspector(self._db._engine).get_columns(
-            table_name)}
+        return {d['name'] for d in self._inspector.get_columns(
+            table_name, schema=self.params.schema)}
 
     def close(self):
         self._db.close()
