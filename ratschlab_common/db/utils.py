@@ -51,7 +51,6 @@ class PostgresDBParams(object):
         return pgpasslib.getpass(self.host, self.port, self.db, self.user)
 
 
-# TODO better name
 class PostgresDBConnectionWrapper:
     def __init__(self, params: PostgresDBParams):
         self._db = records.Database(params.database_url())

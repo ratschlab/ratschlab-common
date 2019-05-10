@@ -30,6 +30,7 @@ setup(
     entry_points={
         'console_scripts': [
             'bigmatrix_repack=ratschlab_common.scripts.bigmatrix_repack:main',
+            'export_db_to_files=ratschlab_common.scripts.export_db_to_files:main'
         ],
     },
     install_requires=requirements,

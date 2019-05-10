@@ -49,16 +49,21 @@ PostgresDBParams, spark: SparkSession):
               help='Database username (password should be managed via .pgpass')
 @click.option("--ssl-mode", type=str,
               help='SSL Mode', default='disable')
-@click.option("--cores", type=int, default=1)
-@click.option("--memory-per-core", type=int, default=5000)
+@click.option("--cores", type=int, default=1, help="Number of workers to use")
+@click.option("--memory-per-core", type=int, default=5000, help="Memory [MB] allocated per worker")
 @click.option("--force", is_flag=True, default=False,
               help='If set, table files will be overwritten')
-@click.option('--default-partition-col', type=str, default=None)
-@click.option('--partition-col', type=(str, str), multiple=True)
-@click.option('--nr-partitions', type=(str, int), multiple=True)
+@click.option('--default-partition-col', type=str, default=None, help="If set, partitions table by the given column (e.g. some ID), if available. The number of partitions are computed using a heurstics.")
+@click.option('--partition-col', type=(str, str), multiple=True, help="pair of table name, column name designating which column the given table should be partitioned on. By default default_partition_col column is used if provided")
+@click.option('--nr-partitions', type=(str, int), multiple=True, help="pair of table name, nr partitions designating how many partitions should be used for the given table. This is only needed, if the default heuristics to calculate the number of paritions per table proves inadequate.")
 def main(dest_dir, db_host, db_port, db_name, db_schema, db_username, ssl_mode, force,
          cores,
          memory_per_core, default_partition_col, partition_col, nr_partitions):
+    """Dumps entire database into parquet files.
+
+       Currently, only PostgreSQL databases are supported. Large tables can be split into separate chunks partitioned on
+       a given column.
+    """
     partition_col_dict = {k: v for k, v in partition_col}
     nr_partitions_dict = {k: v for k, v in nr_partitions}
 
