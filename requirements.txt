@@ -1,9 +1,7 @@
 Click>=6.0
-dask[complete]>=0.17.0
-pandas>=0.22
 pyarrow>=0.8.0
+pandas>=0.22
 tables>=3.4.2
-pyspark>=2.3
 pgpasslib>=1.1.0
 records>=0.5
 psycopg2>=2.7
