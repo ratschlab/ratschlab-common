@@ -31,9 +31,6 @@ Features
   * simple indexing for looking up in which chunk to find data belonging e.g. to a patient
 
 * bigmatrix: support for creating and reading large matrices stored in HDF5 having additional metadata on the axes in form of data frames.
-
-
-
-
-
+* small wrappers for spark and dask (still under construction)
+* Tool to dump database tables into parquet files (`export_db_to_files`). Large tables can be partitioned on a key and dumped into separate file chunks. This allows for further processing to be easily done in parallel.
 
