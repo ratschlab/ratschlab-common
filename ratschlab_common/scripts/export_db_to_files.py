@@ -5,7 +5,8 @@ from pathlib import Path
 import click
 from pyspark.sql import SparkSession
 
-import ratschlab_common.utils
+import ratschlab_common
+from ratschlab_common import spark_wrapper
 from ratschlab_common.db.dump_tables import PostgresTableDumper
 from ratschlab_common.db.utils import PostgresDBConnectionWrapper, \
     PostgresDBParams
@@ -76,7 +77,7 @@ def main(dest_dir, db_host, db_port, db_name, db_schema, db_username, ssl_mode, 
     db_wrapper = PostgresDBConnectionWrapper(db_params)
     tables = db_wrapper.list_tables()
     
-    with ratschlab_common.utils.create_spark_session(cores, memory_per_core) \
+    with spark_wrapper.create_spark_session(cores, memory_per_core) \
         as spark:
 
         dumper = PostgresTableDumper(db_params, spark)

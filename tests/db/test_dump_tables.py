@@ -5,7 +5,7 @@ import pandas.testing
 import pytest
 import testing.postgresql
 
-from ratschlab_common import utils
+from ratschlab_common import spark_wrapper
 from ratschlab_common.db.dump_tables import PostgresTableDumper
 from ratschlab_common.db.utils import PostgresDBParams
 
@@ -28,7 +28,7 @@ def simple_db(a_df):
 
 @pytest.fixture()
 def spark_session(scope="module"):
-    return utils.create_spark_session(1, 500)
+    return spark_wrapper.create_spark_session(1, 500)
 
 
 @pytest.mark.parametrize("nr_partitions", [None, 1, 3])
