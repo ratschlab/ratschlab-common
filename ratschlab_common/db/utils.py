@@ -56,8 +56,10 @@ class PostgresDBConnectionWrapper:
         self._db = records.Database(params.database_url())
         self.params = params
 
+    def __enter__(self):
+        self._db = records.Database(self.params.database_url())
         self._inspector = sqlalchemy.inspect(self._db._engine)
-
+        return self
 
     def count_rows(self, table_name, approx=False):
         if not approx:
@@ -80,6 +82,8 @@ class PostgresDBConnectionWrapper:
         return self._inspector.get_table_names(schema=self.params.schema)
 
     def raw_query(self, q) -> RecordCollection:
+        if self._db is None:
+            raise RuntimeError('Not connected')
         return self._db.query(q)
 
     def list_columns(self, table_name):
