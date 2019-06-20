@@ -35,10 +35,10 @@ class PostgresDBParams(object):
         if self.password:
             name_pwd = '{}:{}'.format(self.user, self.password)
         else:
-            name_pwd = self.user  # assume it is in .pgpass
+            name_pwd = self.user  # assume password is in .pgpass
 
-        return "postgres://{}@{}:{}/{}".format(name_pwd, self.host,
-                                               self.port, self.db)
+        return f"postgres://{name_pwd}@{self.host}:{self.port}/{self.db}"
+
 
     def jdbc_database_url(self):
         return "jdbc:postgresql://{}:{}/{}".format(self.host, self.port,

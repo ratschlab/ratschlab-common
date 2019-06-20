@@ -12,7 +12,7 @@ def default_spark_config(cores: int, memory_per_executor: int, driver_overhead: 
 
     :param cores: number of executors (workers)
     :param memory_per_executor: memory per executor [MB]
-    :param driver_overhead: Memory to allocate for the driver [MB], excluding exectuor memory
+    :param driver_overhead: Memory to allocate for the driver [MB], excluding exector memory
     :param tmp_dir: "scratch" space for spark, typically /tmp by default
     :param extra_java_options: extra parameters for the JVM
     :param enable_arrow: see https://spark.apache.org/docs/2.3.0/sql-programming-guide.html#pyspark-usage-guide-for-pandas-with-apache-arrow , requires pyarrow to be installed

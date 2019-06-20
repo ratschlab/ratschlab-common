@@ -73,7 +73,7 @@ class PostgresTableDumper:
             r = db.raw_query("SELECT MIN({}) AS min, MAX({}) AS max FROM {}".
                              format(col_name, col_name, table_name)).next()
 
-            if not r['min'] or not r['max']:
+            if r['min'] is None or r['max'] is None:
                 return 0, 1
 
             return int(r['min']), int(r['max'])

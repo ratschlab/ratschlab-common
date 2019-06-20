@@ -54,8 +54,6 @@ def test_dump_tables(simple_db, a_df: pd.DataFrame, tmpdir, spark_session,
 
     pandas.testing.assert_frame_equal(a_df_sorted, df_sorted)
 
-    expected_partitions = nr_partitions
-    if not nr_partitions:
-        expected_partitions = 1
+    expected_partitions = nr_partitions if nr_partitions is not None else 1
 
     assert expected_partitions == len(list(out.glob('*.parquet')))
