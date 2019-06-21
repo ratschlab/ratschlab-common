@@ -21,7 +21,7 @@ def test_chunkfile_indexing(a_df, tmpdir, dff, partitions):
         d[key] = np.random.randint(i*2, (i+1)*2, len(a_df))
         dff.write_df(d, os.path.join(tmpdir, 'part-{}.{}'.format(i, dff.format_extension())))
 
-    with dask.set_options(get=dask.local.get_sync):
+    with dask.config.set(scheduler=dask.local.get_sync):
         index_path = chunk_indexing.index_chunkfiles(tmpdir, key, dff)
 
     index = chunk_indexing.load_chunkfile_index(index_path)
@@ -42,7 +42,7 @@ def test_chunkfile_indexing_enforce_disjoint(a_df, tmpdir):
         dff.write_df(d, os.path.join(tmpdir, 'part-{}.{}'.format(i,
                                                                  dff.format_extension())))
 
-    with dask.set_options(get=dask.local.get_sync):
+    with dask.config.set(scheduler=dask.local.get_sync):
         with pytest.raises(ValueError):
             chunk_indexing.index_chunkfiles(tmpdir, key, dff)
 

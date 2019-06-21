@@ -59,7 +59,7 @@ def test_bigmatrix_force(simple_bigmatrix_file, tmpdir):
                                      str(dest_path),
                                      '--matrix-chunkshape', 'auto'])
 
-    assert result.exit_code == -1
+    assert result.exit_code == 1
 
     result = runner.invoke(br.main, [str(simple_bigmatrix_file),
                                      str(dest_path),

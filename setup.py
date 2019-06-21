@@ -13,6 +13,12 @@ setup_requirements = ['pytest-runner']
 with open('requirements.txt') as f:
     requirements = list(f.readlines())
 
+extras_require = {
+  'spark': ['pyspark >= 2.3'],
+  'dask': ['dask[complete] >= 1.2.0', 'distributed >= 1.22']
+}
+extras_require['complete'] = sorted(set(sum(extras_require.values(), [])))
+
 test_requirements = ['pytest']
 
 setup(
@@ -30,9 +36,11 @@ setup(
     entry_points={
         'console_scripts': [
             'bigmatrix_repack=ratschlab_common.scripts.bigmatrix_repack:main',
+            'export_db_to_files=ratschlab_common.scripts.export_db_to_files:main'
         ],
     },
     install_requires=requirements,
+    extras_require=extras_require,
     license="MIT license",
     long_description=readme,
     include_package_data=True,
