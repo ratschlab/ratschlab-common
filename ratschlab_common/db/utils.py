@@ -3,7 +3,7 @@ import pgpasslib
 import records
 import sqlalchemy
 from records import RecordCollection
-from sqlalchemy.engine.reflection import Inspector
+
 
 @attr.s
 class PostgresDBParams(object):
@@ -53,7 +53,6 @@ class PostgresDBParams(object):
 
 class PostgresDBConnectionWrapper:
     def __init__(self, params: PostgresDBParams):
-        self._db = records.Database(params.database_url())
         self.params = params
 
     def __enter__(self):
@@ -92,9 +91,6 @@ class PostgresDBConnectionWrapper:
 
     def close(self):
         self._db.close()
-
-    def __enter__(self):
-        return self
 
     def __exit__(self, exc_type, exc_value, traceback):
         self.close()
