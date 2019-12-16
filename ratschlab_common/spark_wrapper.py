@@ -3,7 +3,8 @@ from pyspark.conf import SparkConf
 from pathlib import Path
 
 
-def default_spark_config(cores: int, memory_per_executor: int, driver_overhead: int = 2000, tmp_dir: str = '', extra_java_options: str = '', enable_arrow: bool = True) -> SparkConf:
+def default_spark_config(cores: int, memory_per_executor: int, driver_overhead: int = 2000,
+                         tmp_dir: str = '', extra_java_options: str = '', enable_arrow: bool = True, use_utc: bool= False) -> SparkConf:
     '''
     Constructs SparkConf object with sensible defaults for the ratschlab environment
 
@@ -29,8 +30,11 @@ def default_spark_config(cores: int, memory_per_executor: int, driver_overhead: 
     if tmp_dir:
         cfg.set("spark.local.dir", tmp_dir)
 
-    # avoiding trouble with JDBC and timestamps
-    java_options = "-Duser.timezone=UTC " + str(extra_java_options)
+    java_options = str(extra_java_options)
+
+    if use_utc:
+        # avoiding trouble with JDBC and timestamps
+        java_options = "-Duser.timezone=UTC " + java_options
 
     return (cfg.set("spark.driver.memory", "{}m".format(driver_mem)).
             set("spark.executor.memory", "{}m".format(memory_per_executor)).

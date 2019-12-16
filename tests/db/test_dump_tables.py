@@ -3,15 +3,16 @@ from pathlib import Path
 import pandas as pd
 import pandas.testing
 import pytest
-import testing.postgresql
-from tests.db import data_fixtures
 
 from ratschlab_common import spark_wrapper
 from ratschlab_common.db.dump_tables import PostgresTableDumper
+from tests.db import data_fixtures
 
-@pytest.fixture()
-def spark_session(scope="module"):
-    return spark_wrapper.create_spark_session(1, 500)
+
+@pytest.fixture(scope="module")
+def spark_session():
+    cfg = spark_wrapper.default_spark_config(1, 500, use_utc=True)
+    return spark_wrapper.create_spark_session_from_config(cfg)
 
 
 @pytest.mark.parametrize("nr_partitions", [None, 1, 3])

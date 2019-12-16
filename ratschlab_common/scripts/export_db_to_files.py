@@ -78,9 +78,8 @@ def main(dest_dir, db_host, db_port, db_name, db_schema, db_username, db_passwor
     with PostgresDBConnectionWrapper(db_params) as db_wrapper:
         tables = db_wrapper.list_tables()
 
-        with spark_wrapper.create_spark_session(cores, memory_per_core) \
-            as spark:
-
+        spark_cfg = spark_wrapper.default_spark_config(cores, memory_per_core, use_utc=True)
+        with spark_wrapper.create_spark_session_from_config(spark_cfg) as spark:
             dumper = PostgresTableDumper(db_params, spark)
             for t in tables:
                 logging.info('Dumping table %s', t)
