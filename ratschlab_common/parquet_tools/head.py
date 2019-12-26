@@ -1,6 +1,11 @@
 import click
 from ratschlab_common.parquet_tools.parquet_reader import ParquetReader
 import sys
+'''
+Examples: 
+ python ratschlab_common/parquet_tools/head.py path_to_file --n 7
+ python ratschlab_common/parquet_tools/head.py path_to_file
+'''
 
 @click.command()
 @click.argument('filepath', type=click.Path(exists=True))
