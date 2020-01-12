@@ -18,8 +18,9 @@ class ParquetReader:
         for i, lines in enumerate(self._read()):
             self.pretty_print(lines, i)
 
-    def tail(self):
-        pass
+    def tail(self, n=5):
+        for i, lines in enumerate(self._read_reverse(max_x=n)):
+            self.pretty_print(lines, i)
 
     def pretty_print(self, lines, i, offset=3):
         if i == 0:
@@ -50,11 +51,28 @@ class ParquetReader:
             if l_c >= max_x > -1:
                 break
 
+    def _read_reverse(self, max_x=-1):
+
+        l_c = 0
+        for i in reversed(range(self.pq_file.num_row_groups)):
+            df = self.pq_file.read_row_group(i).to_pandas()
+            if max_x == -1:
+                lines = df.iloc[:]
+            else:
+                lines = df.iloc[-max([max_x - l_c, 0]):]
+            l_c += len(lines)
+            # maybe not the most efficient here
+            yield lines[::-1]
+            if l_c >= max_x > -1:
+                break
+
 
 
 
 if __name__ == '''__main__''':
     reader = ParquetReader(path)
-    lines = reader.head(n=7)
-    lines = reader.cat()
+    reader.head(n=7)
+    reader.cat()
+    reader.tail()
+    reader.tail(n=8)
 
