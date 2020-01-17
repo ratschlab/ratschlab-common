@@ -11,15 +11,17 @@ class SparseDFReader:
 
     def __init__(self, path):
         self.path = path
-        self.f = tables.open_file(path, mode='r')
 
     def read_hdf(self):
+        self.f = tables.open_file(self.path, mode='r')
         sparse_group = self.f.get_node("/data/sparse")
         sparse_m = self._read_sparse_m(sparse_group)
         s_col_names = self.f.get_node("/data/sparse/col_names")
         non_sparse = pd.read_hdf(self.path, key="/data/non_sparse")
         sparse = pd.DataFrame.sparse.from_spmatrix(sparse_m, columns=s_col_names)
-        return pd.concat([sparse, non_sparse], axis=1)
+        ret_df = pd.concat([sparse, non_sparse], axis=1) 
+        self.f.close()
+        return ret_df
 
     @staticmethod
     def _read_sparse_m(group):
@@ -53,8 +55,11 @@ class SparseDFWriter:
 
     @staticmethod
     def _store_array_hdf(arr, hdf5, group, name):
+        if arr.dtype == 'object':
+            arr = arr.astype('U')
         atom = tables.Atom.from_dtype(arr.dtype)
-        ds = hdf5.create_carray(group, name, atom, arr.shape)
+        filters = tables.Filters(complevel=9, complib='blosc')
+        ds = hdf5.create_carray(group, name, atom, arr.shape, filters=filters)
         ds[:] = arr
 
 
@@ -64,7 +69,7 @@ class SparseDFWriter:
         data_sparse_group = f.create_group(data_group, "sparse")
         self._store_sparse_m(self.sparse_m, f, data_sparse_group)
         self._store_array_hdf(self.sparse.columns.values, f, data_sparse_group, "col_names")
-        self.non_sparse.to_hdf(path, key="data/non_sparse")
+        self.non_sparse.to_hdf(path, key="data/non_sparse", complevel=9, complib='blosc')
         f.close()
 
 
