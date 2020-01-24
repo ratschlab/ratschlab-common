@@ -7,26 +7,39 @@ class ParquetReader:
 
         self.pq_file = pq.ParquetFile(path)
         self.col_names = [i.name for i in self.pq_file.schema]
+        self.col_types = [i.physical_type for i in self.pq_file.schema]
         self._max_len_col = max([len(name) for name in self.col_names])
 
-    def head(self, n=5):
+    def head(self, n=5, header=True):
+        if header:
+            self._pretty_print_header()
         for i, lines in enumerate(self._read(max_x=n)):
-            self.pretty_print(lines, i)
+            self.pretty_print(lines)
 
-    def cat(self):
+    def cat(self, header=True):
+        if header:
+            self._pretty_print_header()
         for i, lines in enumerate(self._read()):
-            self.pretty_print(lines, i)
+            self.pretty_print(lines)
 
-    def tail(self, n=5):
+    def tail(self, n=5, header=True):
+        if header:
+            self._pretty_print_header()
         for i, lines in enumerate(self._read_reverse(max_x=n)):
-            self.pretty_print(lines, i)
+            self.pretty_print(lines)
 
-    def pretty_print(self, lines, i, offset=3):
-        if i == 0:
-            print(" "*offset, end='')
-            for col in self.col_names:
-                print(col, end=" "*offset)
-            print()
+    def schema(self):
+        for col, t in zip(self.col_names, self.col_types):
+            print(col + ': ' + t)
+        print()
+
+    def _pretty_print_header(self, offset=3):
+        print(" " * offset, end='')
+        for col in self.col_names:
+            print(col, end=" " * offset)
+        print()
+
+    def pretty_print(self, lines, offset=3):
 
         for l, i in zip(lines.values, lines.index):
             print(" " + str(i), end=' '*(len(str(i)) + offset -1))
