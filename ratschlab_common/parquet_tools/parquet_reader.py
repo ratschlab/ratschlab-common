@@ -1,7 +1,6 @@
 import pyarrow.parquet as pq
 import pandas as pd
 
-path = "file.parquet"
 
 class ParquetReader:
     def __init__(self, path):
@@ -70,6 +69,7 @@ class ParquetReader:
 
 
 if __name__ == '''__main__''':
+    path = "file.parquet"
     reader = ParquetReader(path)
     reader.head(n=7)
     reader.cat()
