@@ -1,5 +1,6 @@
 import pyarrow.parquet as pq
 import pandas as pd
+import time
 
 
 class ParquetReader:
@@ -33,18 +34,18 @@ class ParquetReader:
             print(col + ': ' + t)
         print()
 
-    def _pretty_print_header(self, offset=3):
-        print(" " * offset, end='')
+    def _pretty_print_header(self):
+        print(" ", end="\t")
         for col in self.col_names:
-            print(col, end=" " * offset)
+            print(col, end="\t")
         print()
 
-    def pretty_print(self, lines, offset=3):
+    def pretty_print(self, lines):
 
         for l, i in zip(lines.values, lines.index):
-            print(" " + str(i), end=' '*(len(str(i)) + offset -1))
+            print(" " + str(i), end='\t')
             for el, col in zip(l, self.col_names):
-                print(" " + str(el), end=' '*(len(col) - len(str(el)) + offset -1))
+                print(" " + str(el), end='\t')
             print()
         #print(lines.to_string(header=False, col_space=2))
 
