@@ -33,11 +33,13 @@ class SparseDFReader:
 
 class SparseDFWriter:
 
-    def __init__(self, df, complevel=5, complib='blosc'):
+    def __init__(self, df, complevel=5, complevel_non_sparse=5, complib='blosc', complib_non_sparse='blosc'):
 
         # Optional arguments
         self.complevel = complevel
         self.complib = complib
+        self.complevel_non_sparse = complevel_non_sparse
+        self.complib_non_sparse = complib_non_sparse
 
         # from nan to zeros (pandas sparse array wants nan by default, scipy sparse matrix zeros)
         # self.df = df.fillna(0.0)
@@ -79,7 +81,7 @@ class SparseDFWriter:
                              complevel=self.complevel, complib=self.complib, **kwargs_sparse)
         self._store_array_hdf(self.sparse.columns.values, f, data_sparse_group, "col_names")
         self.non_sparse.to_hdf(path, key="data/non_sparse",
-                               complevel=self.complevel, complib=self.complib, **kwargs_non_sparse)
+                               complevel=self.complevel_non_sparse, complib=self.complib_non_sparse, **kwargs_non_sparse)
         f.close()
 
 
