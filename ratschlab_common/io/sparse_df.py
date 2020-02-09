@@ -16,7 +16,7 @@ def read_hdf(fpath):
     '''
     f = tables.open_file(fpath, mode='r')
     sparse_group = f.get_node("/data/sparse")
-    sparse_m = _read_sparse_m(sparse_group)
+    sparse_m = _read_sparse_m_coo(sparse_group)
     s_col_names = f.get_node("/data/sparse/col_names")
     non_sparse = pd.read_hdf(fpath, key="/data/non_sparse")
     sparse = pd.DataFrame.sparse.from_spmatrix(sparse_m, columns=s_col_names)
@@ -30,6 +30,22 @@ def _read_sparse_m(group):
         attributes.append(getattr(group, attribute).read())
     sparse_m = sparse.csr_matrix(tuple(attributes[:3]), shape=attributes[3])
     return sparse_m
+
+def _read_sparse_m_coo(group):
+    attributes = []
+    for attribute in ('data', 'row', 'col', 'shape'):
+        attributes.append(getattr(group, attribute).read())
+    t = tuple([attributes[1], attributes[2]])
+    sparse_m = sparse.coo_matrix(tuple([attributes[0], t]), shape=attributes[3])
+    return sparse_m
+
+def _store_sparse_m_coo(m, hdf5, group, complevel=5, complib='blosc', **kwargs):
+    assert (m.__class__ == sparse.coo.coo_matrix), 'm must be a coo matrix'
+    for attribute in ('data', 'row', 'col', 'shape'):
+        arr = np.array(getattr(m, attribute))
+        _store_array_hdf(arr, hdf5, group, attribute,
+                                        complevel=complevel, complib=complib, **kwargs)
+    return hdf5
 
 
 def _store_sparse_m(m, hdf5, group, complevel=5, complib='blosc', **kwargs):
@@ -55,7 +71,7 @@ def _store_non_sparse_df(df, path, complevel=5, complib='blosc', **kwargs):
 
 def to_hdf(df, path, **kwargs):
     '''
-    write sparse dataframe to hdf file. The default compression level and complib are:
+    write sparse dataframe to hdf file . The default compression level and complib are:
     complevel: 5
     complib: 'blosc'
     If you wish to change that, pass a dictionary to the function call as in the following example:
@@ -69,7 +85,9 @@ def to_hdf(df, path, **kwargs):
       'complib': 'lzo'
      }
     }
-    to_hdf(my_df, my_path, **pars)
+    to_hdf(my_df, my_path, **pars).
+
+    The sparse matrix is saved in COO format
     :param df: an instance of Pandas DataFrame that you wish to save to file
     :param path: path of the
     :param kwargs:
@@ -80,11 +98,11 @@ def to_hdf(df, path, **kwargs):
     assert isinstance(kwargs_sparse, dict) and isinstance(kwargs_non_sparse, dict)
 
     sparse_df, non_sparse_df = _split_sparse(df)
-    sparse_m = sparse.csr_matrix(sparse_df.values)
+    sparse_m = sparse.coo_matrix(sparse_df.values)
     f = tables.open_file(path, mode='w')
     data_group = f.create_group("/", "data")
     data_sparse_group = f.create_group(data_group, "sparse")
-    _store_sparse_m(sparse_m, f, data_sparse_group, **kwargs_sparse)
+    _store_sparse_m_coo(sparse_m, f, data_sparse_group, **kwargs_sparse)
     _store_array_hdf(sparse_df.columns.values, f, data_sparse_group, "col_names")
     _store_non_sparse_df(non_sparse_df, path, **kwargs_non_sparse)
     f.close()
