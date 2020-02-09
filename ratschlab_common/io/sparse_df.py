@@ -4,7 +4,10 @@ from pandas.api.types import is_sparse
 from scipy import sparse
 import tables
 
-# need to check which sparse matrix to use (for now supports only csr_matrix)
+'''
+This module exposes two functions: to_hdf and read_hdf, which usage
+is to read and write sparse Pandas DataFrames into and from hdf file.
+'''
 
 
 def read_hdf(fpath):
@@ -117,33 +120,3 @@ def _split_sparse(df):
         else:
             non_sparse_col.append(col)
     return df[sparse_col], df[non_sparse_col]
-
-
-
-
-if __name__ == '__main__':
-    # create sparse df
-    sparse_indexes = [0, 1]
-    df = pd.DataFrame(np.random.randn(10, 4))
-    random_index = np.random.randint(0, 2, size=(10, ))
-    for i in sparse_indexes:
-        df[i][random_index == 0] = 0.0
-        df[i] = pd.SparseArray(df[0], fill_value=0.0)
-    print(is_sparse(df[0]))
-    print(df.head())
-    print(df.dtypes)
-
-    # create writer and save to disk
-    path = "myhdf5file.h5"
-    to_hdf(df, path)
-
-    # create reader and read df
-    read_hdf(path)
-    print(df.head())
-    print(df.dtypes)
-
-    '''
-    print(writer.sparse_m.data, writer.sparse_m.indices, writer.sparse_m.indptr, writer.sparse_m.shape)
-    sdf = df.astype(pd.SparseDtype("float", np.nan))
-    print(sdf.sparse.density)
-    '''
