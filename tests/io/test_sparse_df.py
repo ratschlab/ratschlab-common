@@ -2,11 +2,13 @@ import pandas as pd
 import numpy as np
 from pandas.api.types import is_sparse
 from pandas.testing import assert_frame_equal
-from ratschlab_common.io.sparse_df import SparseDFReader, SparseDFWriter
+from ratschlab_common.io.sparse_df import read_hdf, to_hdf
+import random
 
 def create_sparse_df():
     # create sparse df
     sparse_indexes = [0, 1]
+    random.seed(30)
     df = pd.DataFrame(np.random.randn(10, 4))
     random_index = np.random.randint(0, 2, size=(10,))
     for i in sparse_indexes:
@@ -19,12 +21,10 @@ def test_round_trip():
     # create writer and save to disk
     df_w = create_sparse_df()
     path = "tests/data/myhdf5file.h5"
-    writer = SparseDFWriter(df_w)
-    writer.to_hdf(path)
+    to_hdf(df_w, path)
 
     # create reader and read df
-    reader = SparseDFReader(path)
-    df_r = reader.read_hdf()
+    df_r = read_hdf(path)
 
     assert_frame_equal(df_w, df_r)
 
