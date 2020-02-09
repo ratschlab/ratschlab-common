@@ -1,6 +1,8 @@
 import pyarrow.parquet as pq
-import pandas as pd
-import time
+
+'''
+This module provides tools to use commands like cat, head and tail with parquet file 
+'''
 
 
 class ParquetReader:
@@ -68,8 +70,8 @@ class ParquetReader:
     def _read_reverse(self, max_x=-1):
 
         l_c = 0
-        for i in reversed(range(self.pq_file.num_row_groups)):
-            df = self.pq_file.read_row_group(i).to_pandas()
+        for batch in self.batches:
+            df = batch.to_pandas()
             if max_x == -1:
                 lines = df.iloc[:]
             else:
@@ -84,7 +86,7 @@ class ParquetReader:
 
 
 if __name__ == '''__main__''':
-    path = "file.parquet"
+    path = "file_small.parquet"
     reader = ParquetReader(path)
     reader.head(n=7)
     reader.cat()

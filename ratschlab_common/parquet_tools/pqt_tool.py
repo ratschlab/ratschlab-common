@@ -4,10 +4,10 @@ import click
 
 '''
 Examples: 
- python ratschlab_common/parquet_tools/pqt_tool.py tail path_to_file --n 7
- python ratschlab_common/parquet_tools/pqt_tool.py cat path_to_file
- python ratschlab_common/parquet_tools/pqt_tool.py head path_to_file --n 5 -H
- python ratschlab_common/parquet_tools/pqt_tool.py schema path_to_file 
+ pqt_tool tail path_to_file --n 7
+ pqt_tool cat path_to_file
+ pqt_tool head path_to_file --n 5 -H
+ pqt_tool schema path_to_file 
 '''
 
 @click.group()
