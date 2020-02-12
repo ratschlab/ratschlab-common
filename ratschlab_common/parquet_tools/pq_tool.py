@@ -11,10 +11,10 @@ Examples:
 '''
 
 @click.group()
-def pqt_tool():
+def pq_tool():
     pass
 
-@pqt_tool.command()
+@pq_tool.command()
 @click.argument('filepath', type=click.Path(exists=True))
 @click.option('--n', type=click.INT, default=5)
 @click.option('-H', is_flag=True)
@@ -22,7 +22,7 @@ def tail(filepath, n, h):
     reader = ParquetReader(filepath)
     reader.tail(n=n, header=h)
 
-@pqt_tool.command()
+@pq_tool.command()
 @click.argument('filepath', type=click.Path(exists=True))
 @click.option('--n', type=click.INT, default=5)
 @click.option('-H', is_flag=True)
@@ -30,21 +30,21 @@ def head(filepath, n, h):
     reader = ParquetReader(filepath)
     reader.head(n=n, header=h)
 
-@pqt_tool.command()
+@pq_tool.command()
 @click.argument('filepath', type=click.Path(exists=True))
 @click.option('-H', is_flag=True)
 def cat(filepath, h):
     reader = ParquetReader(filepath)
     reader.cat(header=h)
 
-@pqt_tool.command()
+@pq_tool.command()
 @click.argument('filepath', type=click.Path(exists=True))
 def schema(filepath):
     reader = ParquetReader(filepath)
     reader.schema()
 
 if __name__ == '__main__':
-    sys.exit(pqt_tool())
+    sys.exit(pq_tool())
 
 
 
