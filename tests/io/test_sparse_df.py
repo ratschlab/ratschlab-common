@@ -5,15 +5,16 @@ from ratschlab_common.io.sparse_df import read_hdf, to_hdf
 import random
 import pytest
 
-@pytest.fixture(scope='module', params=[[0,1], [0,2]])
+
+@pytest.fixture(scope='module', params=[([0,1], None), ([0,2], None), ([0,1],['a', 'b', 'c', 'd'])])
 def sparse_df(request):
     # create sparse df
     random.seed(30)
-    df = pd.DataFrame(np.random.randn(10, 4))
+    df = pd.DataFrame(np.random.randn(10, 4), columns=request.param[1])
     random_index = np.random.randint(0, 2, size=(10,))
-    for i in request.param:
-        df[i][random_index == 0] = 0.0
-        df[i] = pd.SparseArray(df[0], fill_value=0.0)
+    for i in request.param[0]:
+        df[df.columns[i]][random_index == 0] = 0.0
+        df[df.columns[i]] = pd.SparseArray(df[df.columns[i]], fill_value=0.0)
     return df
 
 def test_round_trip(sparse_df, tmp_path):
@@ -47,5 +48,3 @@ def test_options(sparse_df, tmp_path):
     # create reader and read df
     df_r = read_hdf(path)
     assert_frame_equal(df_w, df_r)
-
-

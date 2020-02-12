@@ -20,8 +20,12 @@ def read_hdf(fpath):
     with tables.open_file(fpath, mode='r') as f:
         sparse_group = f.get_node("/data/sparse")
         sparse_m = _read_sparse_m_coo(sparse_group)
-        col_names = f.get_node("/col_names")
-        s_col_names = f.get_node("/data/sparse/sparse_col_names")
+        if np.issubdtype(f.get_node("/col_names").dtype, np.number):
+            col_names = f.get_node("/col_names")
+            s_col_names = f.get_node("/data/sparse/sparse_col_names")
+        else:
+            col_names = [c.decode('UTF-8') for c in f.get_node("/col_names")]
+            s_col_names = [c.decode('UTF-8') for c in f.get_node("/data/sparse/sparse_col_names")]
         non_sparse = pd.read_hdf(fpath, key="/data/non_sparse")
         sparse = pd.DataFrame.sparse.from_spmatrix(sparse_m, columns=s_col_names)
         ret_df = pd.concat([sparse, non_sparse], axis=1)
