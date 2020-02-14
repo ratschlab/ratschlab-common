@@ -29,7 +29,8 @@ class ParquetReader:
     def tail(self, n=5, header=True):
         if header:
             self._pretty_print_header()
-        for i, lines in enumerate(self._read_reverse(max_x=n)):
+        start = self.pq_file.metadata.num_rows - n
+        for i, lines in enumerate(self._read(min_x=start)):
             self.pretty_print(lines)
 
     def schema(self):
@@ -46,7 +47,7 @@ class ParquetReader:
     def pretty_print(self, lines):
 
         for l, i in zip(lines.values, lines.index):
-            print(" " + str(i), end='\t')
+            #print(" " + str(i), end='\t')
             for el, col in zip(l, self.col_names):
                 print(" " + str(el), end='\t')
             print()
@@ -58,27 +59,15 @@ class ParquetReader:
         l_c = 0
         for batch in self.batches:
             df = batch.to_pandas()
+            if min_x >= len(df) + l_c:
+                l_c += len(df)
+                continue
             if max_x == -1:
                 lines = df.iloc[max([min_x - l_c, 0]):]
             else:
                 lines = df.iloc[max([min_x - l_c, 0]): max_x - l_c]
-            l_c += len(lines)
+            l_c += len(df)
             yield lines
-            if l_c >= max_x > -1:
-                break
-
-    def _read_reverse(self, max_x=-1):
-
-        l_c = 0
-        for batch in self.batches:
-            df = batch.to_pandas()
-            if max_x == -1:
-                lines = df.iloc[:]
-            else:
-                lines = df.iloc[-max([max_x - l_c, 0]):]
-            l_c += len(lines)
-            # maybe not the most efficient here
-            yield lines[::-1]
             if l_c >= max_x > -1:
                 break
 

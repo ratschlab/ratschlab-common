@@ -4,9 +4,9 @@ import click
 
 '''
 Examples: 
- pqt_tool tail path_to_file --n 7
+ pqt_tool tail path_to_file -n 7
  pqt_tool cat path_to_file
- pqt_tool head path_to_file --n 5 -H
+ pqt_tool head path_to_file -n 5 -H
  pqt_tool schema path_to_file 
 '''
 
@@ -16,7 +16,7 @@ def pq_tool():
 
 @pq_tool.command()
 @click.argument('filepath', type=click.Path(exists=True))
-@click.option('--n', type=click.INT, default=5)
+@click.option('-n', type=click.INT, default=5)
 @click.option('-H', is_flag=True)
 def tail(filepath, n, h):
     reader = ParquetReader(filepath)
@@ -24,7 +24,7 @@ def tail(filepath, n, h):
 
 @pq_tool.command()
 @click.argument('filepath', type=click.Path(exists=True))
-@click.option('--n', type=click.INT, default=5)
+@click.option('-n', type=click.INT, default=5)
 @click.option('-H', is_flag=True)
 def head(filepath, n, h):
     reader = ParquetReader(filepath)
