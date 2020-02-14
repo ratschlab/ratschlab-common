@@ -37,7 +37,7 @@ setup(
         'console_scripts': [
             'bigmatrix_repack=ratschlab_common.scripts.bigmatrix_repack:main',
             'export_db_to_files=ratschlab_common.scripts.export_db_to_files:main',
-            'pq_tool=ratschlab_common.parquet_tools.pq_tool:pq_tool'
+            'pq-tool=ratschlab_common.parquet_tools.pq_tool:pq_tool'
         ],
     },
     install_requires=requirements,
