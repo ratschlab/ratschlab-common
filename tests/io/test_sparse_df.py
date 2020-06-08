@@ -14,7 +14,7 @@ def sparse_df(request):
     random_index = np.random.randint(0, 2, size=(10,))
     for i in request.param[0]:
         df[df.columns[i]][random_index == 0] = 0.0
-        df[df.columns[i]] = pd.SparseArray(df[df.columns[i]], fill_value=0.0)
+        df[df.columns[i]] = pd.arrays.SparseArray(df[df.columns[i]], fill_value=0.0)
     return df
 
 def test_round_trip(sparse_df, tmp_path):

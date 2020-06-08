@@ -155,5 +155,4 @@ class HdfDataFrameFormat(AbstractDataFrameFormat):
 
     def _library_default_writing_options(self):
         return MappingProxyType({'key': self.DEFAULT_KEY, 'format': 'table',
-                                 'complib': 'blosc:lz4', 'complevel': 5,
-                                 'fletcher32': True})
+                                 'complib': 'blosc:lz4', 'complevel': 5})

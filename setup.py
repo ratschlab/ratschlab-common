@@ -5,7 +5,7 @@
 
 from setuptools import setup, find_packages
 
-with open('README.rst') as readme_file:
+with open('README.md') as readme_file:
     readme = readme_file.read()
 
 setup_requirements = ['pytest-runner']
@@ -14,8 +14,8 @@ with open('requirements.txt') as f:
     requirements = list(f.readlines())
 
 extras_require = {
-  'spark': ['pyspark >= 2.3'],
-  'dask': ['dask[complete] >= 1.2.0', 'distributed >= 1.22']
+  'spark': ['pyspark >= 2.4'],
+  'dask': ['dask[complete] >= 1.9.0', 'distributed >= 1.22']
 }
 extras_require['complete'] = sorted(set(sum(extras_require.values(), [])))
 
@@ -35,9 +35,9 @@ setup(
     description="Small library of common functionalities used in various projects in the ratschlab",
     entry_points={
         'console_scripts': [
-            'bigmatrix_repack=ratschlab_common.scripts.bigmatrix_repack:main',
-            'export_db_to_files=ratschlab_common.scripts.export_db_to_files:main',
-            'pq-tool=ratschlab_common.parquet_tools.pq_tool:pq_tool'
+            'bigmatrix-repack=ratschlab_common.scripts.bigmatrix_repack:main',
+            'export-db-to-files=ratschlab_common.scripts.export_db_to_files:main',
+            'pq-tool=ratschlab_common.io.parquet_tools.pq_tool:pq_tool'
         ],
     },
     install_requires=requirements,

@@ -1,0 +1,35 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: continuumio/miniconda3:4.8.2
+    steps:
+      - checkout:
+          path: /tmp/ratschlab-common
+      - run:
+          name: setup environment
+          command: |
+            apt-get update && apt-get install -y gnupg
+            wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | apt-key add -
+            echo "deb https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/ buster main" | tee -a /etc/apt/sources.list
+            mkdir /usr/share/man/man1/
+            # need java 8 for pyspark 2.4
+            apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y gcc postgresql adoptopenjdk-8-openj9-jre
+            conda create -y -n common python==3.7 pip
+      - run:
+          name: install ratschlab-common
+          command: |
+            ls -l /tmp/ratschlab-common
+            pip install /tmp/ratschlab-common/[complete]
+      - run:
+          name: running tests
+          working_directory: /tmp/ratschlab-common
+          command: |
+            pip install -r requirements_dev.txt
+            mkdir /tmp/test_reports && chmod o+rwx /tmp/test_reports
+            source activate common
+            # testing.postgresql based tests cannot be run as root
+            chmod -R o+rwx /tmp/ratschlab-common
+            su postgres -c "pytest --junitxml=/tmp/test_reports/pytest-results.xml"
+      - store_test_results:
+          path: /tmp/test_reports

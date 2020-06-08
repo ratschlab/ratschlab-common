@@ -3,7 +3,7 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 import pandas as pd
 import numpy as np
-from ratschlab_common.parquet_tools.parquet_reader import ParquetReader
+from ratschlab_common.io.parquet_tools.parquet_reader import ParquetReader
 from contextlib import redirect_stdout
 import io
 

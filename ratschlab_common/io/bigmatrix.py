@@ -102,8 +102,7 @@ class TablesBigMatrixWriter(AbstractBigMatrixWriter):
     Both metadata and matrix are stored using the BLOSC compressor by default.
     """
 
-    BLOSC_FILTER = tables.Filters(complevel=5, complib='blosc:lz4',
-                                  fletcher32=True)
+    BLOSC_FILTER = tables.Filters(complevel=5, complib='blosc:lz4')
 
     hdf_pandas_format = HdfDataFrameFormat()
 

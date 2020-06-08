@@ -1,4 +1,4 @@
-from ratschlab_common.parquet_tools.parquet_reader import ParquetReader
+from ratschlab_common.io.parquet_tools.parquet_reader import ParquetReader
 import sys
 import click
 
