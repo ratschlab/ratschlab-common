@@ -8,7 +8,7 @@ Small library of common code used in various projects in the [ratschlab](http://
     `ratschlab_common.io.dataframe_formats`.
 -   Support for working with \'chunkfiles\', i.e. splitting up a large
     dataset in smaller chunks which can be processed independently (see
-    [example notebook](notebooks/chunkfiles_example.ipynb)):
+    [example notebook](https://github.com/ratschlab/ratschlab-common/blob/master/notebooks/chunkfiles_example.ipynb)):
     -   Repartition records (i.e. increase or decrease number of
         chunkfiles) while keeping data belonging together in the same
         file (e.g. data with the same patient id associated)
@@ -16,10 +16,10 @@ Small library of common code used in various projects in the [ratschlab](http://
         belonging e.g. to a patient
 -   bigmatrix: support for creating and reading large matrices stored in
     HDF5 having additional metadata on the axes in form of data frames
-    (see [example notebook](notebooks/bigmatrix_example.ipynb).)
+    (see [example notebook](https://github.com/ratschlab/ratschlab-common/blob/master/notebooks/bigmatrix_example.ipynb).)
 -   small wrappers for spark and dask ([spark
-    example](notebooks/spark_example.ipynb).)
--   saving sparse `pandas` dataframes to hdf5, see [example notebook](notebooks/sparse_dataframe_io_example.ipynb)
+    example](https://github.com/ratschlab/ratschlab-common/blob/master/notebooks/spark_example.ipynb).)
+-   saving sparse `pandas` dataframes to hdf5, see [example notebook](https://github.com/ratschlab/ratschlab-common/blob/master/notebooks/sparse_dataframe_io_example.ipynb)
     
 ### Tools
 
