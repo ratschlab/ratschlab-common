@@ -4,4 +4,4 @@
 
 __author__ = """Ratschlab"""
 __email__ = 'marc.zimmermann@inf.ethz.ch'
-__version__ = '0.3.0'
+__version__ = '0.3.1'
