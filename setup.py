@@ -3,6 +3,7 @@
 
 """The setup script."""
 
+import re
 from setuptools import setup, find_packages
 
 with open('README.md') as readme_file:
@@ -11,7 +12,7 @@ with open('README.md') as readme_file:
 setup_requirements = ['pytest-runner']
 
 with open('requirements.txt') as f:
-    requirements = list(f.readlines())
+    requirements = [re.sub(r'(git\+.*egg=(.*))', r'\2 @ \1', _.strip()) for _ in f.readlines()]
 
 extras_require = {
   'spark': ['pyspark >= 2.4'],
