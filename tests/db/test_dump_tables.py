@@ -16,7 +16,6 @@ def spark_session():
 
 
 @pytest.mark.parametrize("nr_partitions", [None, 1, 3])
-@pytest.mark.slow
 def test_dump_tables(simple_db, a_df: pd.DataFrame, tmpdir, spark_session,
                      nr_partitions):
     db_cfg, db_instance = simple_db

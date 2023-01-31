@@ -37,7 +37,7 @@ class PostgresDBParams(object):
         else:
             name_pwd = self.user  # assume password is in .pgpass
 
-        return f"postgres://{name_pwd}@{self.host}:{self.port}/{self.db}"
+        return f"postgresql://{name_pwd}@{self.host}:{self.port}/{self.db}"
 
 
     def jdbc_database_url(self):

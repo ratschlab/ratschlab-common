@@ -48,7 +48,7 @@ def _read_sparse_m_coo(group):
     return sparse_m
 
 def _store_sparse_m_coo(m, hdf5, group, complevel=5, complib='blosc', **kwargs):
-    assert (m.__class__ == sparse.coo.coo_matrix), 'm must be a coo matrix'
+    assert (m.__class__ == sparse.coo_matrix), 'm must be a coo matrix'
     for attribute in ('data', 'row', 'col', 'shape'):
         arr = np.array(getattr(m, attribute))
         _store_array_hdf(arr, hdf5, group, attribute,

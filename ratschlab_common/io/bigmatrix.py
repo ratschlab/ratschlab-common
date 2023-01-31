@@ -261,10 +261,10 @@ class TablesBigMatrixReader(AbstractBigMatrixReader):
             row_dims, col_dims = item
 
             # attempt to convert to slice (e.g. 1,2,3 -> 1:3)
-            if isinstance(row_dims, collections.Iterable):
+            if isinstance(row_dims, collections.abc.Iterable):
                 row_dims = self._convert_to_slice(row_dims)
 
-            if isinstance(col_dims, collections.Iterable):
+            if isinstance(col_dims, collections.abc.Iterable):
                 col_dims = self._convert_to_slice(col_dims)
 
             if isinstance(row_dims, slice) or isinstance(col_dims, slice):

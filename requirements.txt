@@ -3,6 +3,9 @@ pyarrow>=0.17.0
 pandas>=1.0
 tables>=3.4.2
 pgpasslib>=1.1.0
-records>=0.5
+git+https://github.com/akahles/records.git@master#records
 scipy>=1.4.0
 psycopg2-binary>=2.7
+pyspark
+dask
+sqlalchemy==1.2.19
